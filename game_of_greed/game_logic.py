@@ -1,35 +1,84 @@
 import random
 
+def handle_type_error(func):
+  def wrapper(args):
+    try:
+      return func(args)
+    except Exception as e:
+      return 0
+  return wrapper
+
+
 class GameLogic:
   def __init__(self):
     pass
 
   @staticmethod
+  @handle_type_error
   def calculate_score(args):
     score = 0
     frequency = {}
+
+    # single input
+    if type(args) == int:
+      if args == 1:
+        score += 100
+      elif args == 5:
+        score += 50
+      return score
+
+    # Straight
+    if len(args) == 6:
+      arr = list(args)
+      arr.sort()
+      if arr == [ 1,2,3,4,5,6 ]:
+        score += 1500
+        return score
+      
+
+    # input Frequency
     for i in args:
       if i in frequency:
         frequency[i] += 1
       else:
         frequency[i] = 1
-    
-    # Score Logic
+
+    # 3 pairs
+    pair_arr = []
+    for i in frequency:
+      if frequency[i] == 2:
+        pair_arr.append(i)
+      if len(pair_arr) == 3:
+        score = 1000
+        return score
+      
+    # Scoring tuple input
     for key in frequency:
       if key == 1:
-        if frequency[key] == 3:
+        if frequency[key] >= 3:
           score += 1000
+          remain_ones = frequency[key] - 3
+          for i in range(remain_ones):
+            score = score * 2
         else:
           score += frequency[key] * 100
-        continue
-      if frequency[key] == 3:
-        score += 100  * key
-      if key == 5:
-        score += frequency[key] * 50
+      
+      elif key == 5:
+        if frequency[key] >= 3:
+          score += 500
+          remain_ones = frequency[key] - 3
+          for i in range(remain_ones):
+            score = score * 2
+        else:
+          score += frequency[key] * 50
+     
+      elif frequency[key] >= 3:
+        score += 100 * key
+        remaining = frequency[key] - 3
+        for num in range(remaining):
+          score = score * 2
     return score
       
-        
-
   @staticmethod
   def roll_dice(*args):
     results = []
@@ -58,35 +107,12 @@ class Banker:
 
 
   
-  '''
-  # single fives == 50
-  # ones == 100
-  # three of a kind == 100 X number rolled except ones are worth 1000
-  # four-6 of a kind == each de doubles amount of previous roll
-  # straight == 1500
-  # three pairs are worth 1000
+# previous = (1,2,3,4,5,6)
+# score = GameLogic.roll_dice(*previous)
+ss = (6,4,1,1,4,6)
 
-  1 == 100
-  5 == 50
-  1,1,1 == 1000
-  2,2,2 == 200
-  3,3,3 == 300
-  4,4,4 == 400
-  5,5,5 == 500
-  6,6,6 == 600
-  '''
-  
-
-# print(GameLogic.calculate_score(2,3,3,4,5,5))
-# b = Banker()
-# b.shelf(100)
-# b.shelf(50)
-# b.shelf(100)
-# b.bank()
-# print(f'There are {b.unbanked} unbanked and {b.banked} banked points')
-
-previous = (1,2,3,4,5,6)
-score = GameLogic.roll_dice(*previous)
-ss = [1,5,1]
 print(GameLogic.calculate_score(ss))
 
+B = Banker()
+B.shelf(500)
+print(B.unbanked)
