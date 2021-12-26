@@ -49,7 +49,7 @@ class GameLogic:
       if frequency[i] == 2:
         pair_arr.append(i)
       if len(pair_arr) == 3:
-        score = 1000
+        score = 1500
         return score
       
     # Scoring tuple input
@@ -59,16 +59,16 @@ class GameLogic:
           score += 1000
           remain_ones = frequency[key] - 3
           for i in range(remain_ones):
-            score = score * 2
+            score += 1000
         else:
           score += frequency[key] * 100
       
       elif key == 5:
         if frequency[key] >= 3:
           score += 500
-          remain_ones = frequency[key] - 3
-          for i in range(remain_ones):
-            score = score * 2
+          remain_fives = frequency[key] - 3
+          for i in range(remain_fives):
+            score += 500
         else:
           score += frequency[key] * 50
      
@@ -76,43 +76,13 @@ class GameLogic:
         score += 100 * key
         remaining = frequency[key] - 3
         for num in range(remaining):
-          score = score * 2
+          score += key * 100
     return score
       
   @staticmethod
-  def roll_dice(*args):
+  def roll_dice(num):
     results = []
-    for i in args:
-      results.append(random.randint(0,6))
+    for i in range(num):
+      results.append(random.randint(1,6))
+
     return tuple(results)
-
-  
-class Banker:
-  def __init__(self):
-    self.unbanked = 0
-    self.banked = 0
-
-  def shelf(self, points=0):
-    self.unbanked += points
-
-
-  def bank(self):
-    self.banked = self.unbanked
-    self.unbanked = 0
-    return self.banked
-
-  def clear_shelf(self):
-    self.shelf = 0
-
-
-
-  
-# previous = (1,2,3,4,5,6)
-# score = GameLogic.roll_dice(*previous)
-ss = (6,4,1,1,4,6)
-
-print(GameLogic.calculate_score(ss))
-
-B = Banker()
-B.shelf(500)
-print(B.unbanked)
